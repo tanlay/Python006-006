@@ -4,6 +4,11 @@ import time
 from pathlib import Path
 
 """
+程序功能是使用python查询系统开启的TCP端口，
+把端口信息输出为json格式，方便zabbix自动发现。
+"""
+
+"""
 由于普通用户对/var/log/目录没有写入权限，
 可以使用管理员账户让普通用户对其有写入权限,
 执行以下命令chmod o+w /var/log
