@@ -7,4 +7,4 @@ myurl = 'https://movie.douban.com/top250'
 
 resp = requests.get(myurl, headers=header)
 print(resp.text)
-print(f'返回码是： {resp.status_code}')
+print(f'状态码： {resp.status_code}')

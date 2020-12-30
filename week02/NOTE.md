@@ -25,3 +25,12 @@ Socket
 - recv()
 - send()
 - close()
+
+
+### 常见的集中异常类型
+- LookupError 下的IndexError 和 KerError
+- IOError
+- NameError
+- TypeError
+- AttributeError
+- ZeroDivisionError
