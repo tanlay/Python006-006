@@ -20,8 +20,8 @@ login_url = 'https://accounts.douban.com/j/mobile/login/basic'
 from_data = {
     'ck':'',
     'remember':'true',
-    'name':'18313178130',
-    'password':'cR@921yang',
+    'name':'XXXXX',
+    'password':'*******',
 }
 
 resp = sess.post(login_url, data=from_data, headers=header)
