@@ -34,3 +34,13 @@ Socket
 - TypeError
 - AttributeError
 - ZeroDivisionError
+
+### request
+- requests.get(url,headers,timeout)
+- requests.post(url,headers,data)
+- requests.Session()
+
+### 设计模式，自顶向下设计
+- 从整体分析复杂问题
+- 分析方法重用
+- 拆分到可以解决的范围
