@@ -18,6 +18,7 @@
         "DBNAME",
         "dbconfig",
         "dbsrv",
+        "dburl",
         "host",
         "port",
         "pymysql",
