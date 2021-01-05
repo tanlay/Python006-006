@@ -1,0 +1,27 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3308,
+            "driver": "MySQL",
+            "name": "ubuntu-localhost",
+            "database": "testdb",
+            "username": "python",
+            "password": "python123"
+        }
+    ],
+    "cSpell.words": [
+        "DBNAME",
+        "dbconfig",
+        "dbsrv",
+        "host",
+        "port",
+        "pymysql",
+        "testdb",
+        "user"
+    ]
+}
