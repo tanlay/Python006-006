@@ -9,7 +9,7 @@ Base = declarative_base()
 class Book_table(Base):
     __tablename__ = 'bookorm'
     book_id = Column(Integer(), primary_key=True)
-    book_name = Column(String(120), index=True)
+    book_name = Column(String(200), index=True)
 
     def __repr__(self):
         return f"Book_table(book_id={self.book_id},book_name-={book_name})"
@@ -18,12 +18,12 @@ class Book_table(Base):
 class Author_table(Base):
     __tablename__ = 'authororm'
     user_id = Column(Integer(), primary_key=True)
-    username = Column(String(20),nullable=False, unique=True)
+    username = Column(String(50),nullable=False, unique=True)
     created_time = Column(DateTime(), default=datetime.now())
     updated_time = Column(DateTime(), default=datetime.now(), onupdate=datetime.now)
 
 # 实例化引擎
-dburl = "mysql+pymysql://python:python123@localhost:3306/testdb?charset=utf8mb4"
+dburl = "mysql+pymysql://python:python123@localhost:3308/testdb?charset=utf8mb4"
 engine = create_engine(dburl, echo=True, encoding='utf-8')
 
 # 创建一个session
