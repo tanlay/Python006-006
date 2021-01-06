@@ -71,7 +71,7 @@ sudo systemctl enable mysql
 # 使用初始化之后的密码登录数据库
 mysql -uroot -p
 # 修改mysql管理员密码，由于是开发环境，设置一个弱密码，生产环境需要增加密码强度
-mysql> alter root@'localhost' identified by '1234';
+mysql> alter user root@'localhost' identified by '1234';
 ```
 
 ### 查看数据库当前字符集
