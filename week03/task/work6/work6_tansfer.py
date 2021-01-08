@@ -101,7 +101,7 @@ if __name__ == "__main__":
     # OpTable.drop_table()
     try:
         # 调用transfer方法
-        OpTable.transfer("张三", "李四", 50, session)
+        OpTable.transfer("张三", "李四", 10, session)
         session.commit()
     # except exc.SQLAlchemyError:
     except Exception:
