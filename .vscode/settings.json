@@ -16,16 +16,28 @@
     ],
     "cSpell.words": [
         "DBNAME",
+        "amount",
         "dbconfig",
+        "dbsession",
         "dbsrv",
         "dburl",
         "dbutils",
+        "dest",
+        "geek",
+        "get",
         "host",
+        "id",
         "install",
+        "name",
+        "onupdate",
         "port",
         "pymysql",
         "session",
         "testdb",
+        "total",
         "user"
+    ],
+    "cSpell.ignoreWords": [
+        "session"
     ]
 }
