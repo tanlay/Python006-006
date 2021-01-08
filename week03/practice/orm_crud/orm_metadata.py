@@ -1,5 +1,5 @@
 import pymysql
-from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, ForeignKey
+from sqlalchemy import create_engine, Table, Column, MetaData, Integer, String, ForeignKey
 
 # 打开数据库连接
 # 需要创建数据库testdb,并授权新用户python访问
