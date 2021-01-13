@@ -21,31 +21,28 @@ short_info = dict(zip(star, content))
 想到的办法是: 每次建表之前清空表
 """
 
-def download(url):
+def download(url, num):
     HEADERS = {
         'User-Agent':
         'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36'
     }
     try:
-        res = requests.get(url, headers=HEADERS, timeout=5)
-        print(f"正在抓取{url}")
+        res = requests.get(url, headers=HEADERS, timeout=10)
+        print(f"开始抓取: {url}")
         return res.text
-    except requests.ConnectionError:
-        print('请检查网络!!!')
-    except requests.ConnectTimeout:
-        print('连接超时!!!')
-    except Exception as err:
-        print(err)
-        sys.exit(1)
+    except Exception:
+        print(f'抓取{num}个页面')
+        raise Exception (f"抓取失败: {url}")
 
 
-def pageparse(html):
+def pageparse(html, num):
     soup = BeautifulSoup(html, 'html.parser')
 
     itemtemp = soup.select('#comments > div.comment-item')
     if len(itemtemp) == 0:
-        print('资源不存在, 请输入正确的movie_id,退出程序。')
-        sys.exit(1)
+        print('资源不存在')
+        print(f'累计抓取{num}个页面')
+        sys.exit(404)
     data = []
     for item in itemtemp:
         user = item.select_one(
@@ -65,7 +62,7 @@ def pageparse(html):
             'comment': comment,
             'ctime': ctime
         })
-    print(f"movie_id ({movie_id}): 页面数据提取完成")
+    print(f"movie_id ({movie_id}): 数据提取完成")
     return data
 
 
@@ -101,33 +98,27 @@ def savedb(movie_id, data):
         session.commit()
         print(f"movie_id ({movie_id}): 保存数据完成")
     except Exception as err:
-        print(f"保存数据失败，退出程序")
-        sys.exit(1)
+        print(f"保存数据失败")
+        raise Exception (f'err')
 
 
 if __name__ == "__main__":
     # 设置需要抓取的电影ID，通过豆瓣网页获取
-    movie_id='1292720'
-    # movie_id='12720'
-    # 拼接URL
-   # url = f'https://movie.douban.com/subject/{movie_id}/comments'
-   # # 调用download下载相应页面
-   # html = download(url)
-   # # 调用pageparse解析需要的数据
-   # result = pageparse(html)
-   # # 数据保存数据库
-   # savedb(movie_id, result)
+    # movie_id='1292720'
+    # movie_id='1292064'
+    movie_id='27073752'
 
+    # next url偏移量
     offset=0
+    # 爬取次数
+    num=0
     while 1:
         url = f'https://movie.douban.com/subject/{movie_id}/comments?start={offset}&limit=20&status=P&sort=new_score'
-        html = download(url)
-        result = pageparse(html)
+        html = download(url, num)
+        result = pageparse(html, num)
         savedb(movie_id, result)
 
         time.sleep(2)
         print("等待2s，继续爬取")
+        num += 1
         offset += 20
-
-
-
