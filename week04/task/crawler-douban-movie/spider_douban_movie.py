@@ -50,7 +50,10 @@ def pageparse(html, num):
         rating = item.select_one('h3 > span.comment-info > span.rating')
         star = None
         if rating is not None:
-            star = rating.get('class')[0].replace('allstar', '')
+            # star = rating.get('class')[0].replace('allstar', '')
+            # 直接提取子串更适合
+            star = rating.get('class')[0][7]
+            # print(star)
             ctime = item.select_one(
                 'h3 > span.comment-info > span.comment-time').attrs['title']
             comment = item.select_one(
@@ -104,9 +107,7 @@ def savedb(movie_id, data):
 
 if __name__ == "__main__":
     # 设置需要抓取的电影ID，通过豆瓣网页获取
-    # movie_id='1292720'
-    # movie_id='1292064'
-    movie_id='27073752'
+    movie_id='1292722'
 
     # next url偏移量
     offset=0
