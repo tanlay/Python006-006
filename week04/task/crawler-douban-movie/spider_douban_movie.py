@@ -1,9 +1,9 @@
-from datetime import datetime
-
+import sys
+import time
 import requests
 from bs4 import BeautifulSoup
 from sqlalchemy import (Column, DateTime, Integer, SmallInteger, Text,
-                        create_engine)
+                        create_engine, String)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -16,7 +16,9 @@ content = result.xpath('//div[@class="comment"]/p/span/text()')
 short_info = dict(zip(star, content))
 所以学习了下bs4语法，使用bs4获取数据--BeautifulSoup--
 借鉴了这位同学: https://github.com/zlikun/python-crawler-douban-movie.git
-数据保存部分，使用了sqlalchmey的ORM来。
+数据保存部分，使用了sqlalchmey的ORM，
+存在问题可能，重复执行程序，会追加到数据库中，
+想到的办法是: 每次建表之前清空表
 """
 
 def download(url):
@@ -26,38 +28,36 @@ def download(url):
     }
     try:
         res = requests.get(url, headers=HEADERS, timeout=5)
-        print(res)
+        print(f"正在抓取{url}")
         return res.text
-    except requests.ConnectionError as err:
-        print(f'请检查网络！{err}')
-    except requests.ConnectTimeout as err:
-        print(f'连接超时： {err}')
+    except requests.ConnectionError:
+        print('请检查网络!!!')
+    except requests.ConnectTimeout:
+        print('连接超时!!!')
     except Exception as err:
         print(err)
+        sys.exit(1)
 
 
 def pageparse(html):
     soup = BeautifulSoup(html, 'html.parser')
 
     itemtemp = soup.select('#comments > div.comment-item')
+    if len(itemtemp) == 0:
+        print('资源不存在, 请输入正确的movie_id,退出程序。')
+        sys.exit(1)
     data = []
     for item in itemtemp:
         user = item.select_one(
             'h3 > span.comment-info > a').get_text(strip=True)
         rating = item.select_one('h3 > span.comment-info > span.rating')
-        # print(rating)
         star = None
         if rating is not None:
             star = rating.get('class')[0].replace('allstar', '')
-            # print(star)
             ctime = item.select_one(
                 'h3 > span.comment-info > span.comment-time').attrs['title']
-            # print(ctime)
-            # te = []
             comment = item.select_one(
                 'div.comment > p > span.short').get_text(strip=True)
-            # te.append(comment)
-            # print(len(te))
 
         data.append({
             'user': user,
@@ -65,7 +65,7 @@ def pageparse(html):
             'comment': comment,
             'ctime': ctime
         })
-
+    print(f"movie_id ({movie_id}): 页面数据提取完成")
     return data
 
 
@@ -81,7 +81,7 @@ def savedb(movie_id, data):
         __tablename__ = f'movie_{movie_id}'
         id = Column(Integer(), primary_key=True,
                     autoincrement=True, comment='主键ID')
-        user = Column(Text(), comment='用户')
+        user = Column(String(50), comment='用户')
         star = Column(SmallInteger(), comment='短评星级')
         comment = Column(Text(), comment='短评内容')
         ctime = Column(DateTime(), comment='短评时间')
@@ -97,18 +97,37 @@ def savedb(movie_id, data):
     session = db_session()
     # 使用bulk_insert_mappings批量插入list(dict{})格式的数据
     session.bulk_insert_mappings(Movie_table, data)
-    session.commit()
+    try:
+        session.commit()
+        print(f"movie_id ({movie_id}): 保存数据完成")
+    except Exception as err:
+        print(f"保存数据失败，退出程序")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
     # 设置需要抓取的电影ID，通过豆瓣网页获取
     movie_id='1292720'
+    # movie_id='12720'
     # 拼接URL
-    url = f'https://movie.douban.com/subject/{movie_id}/comments'
-    # 调用download下载相应页面
-    html = download(url)
-    # 调用pageparse解析需要的数据
-    result = pageparse(html)
-    # 数据保存数据库
-    savedb(movie_id, result)
+   # url = f'https://movie.douban.com/subject/{movie_id}/comments'
+   # # 调用download下载相应页面
+   # html = download(url)
+   # # 调用pageparse解析需要的数据
+   # result = pageparse(html)
+   # # 数据保存数据库
+   # savedb(movie_id, result)
+
+    offset=0
+    while 1:
+        url = f'https://movie.douban.com/subject/{movie_id}/comments?start={offset}&limit=20&status=P&sort=new_score'
+        html = download(url)
+        result = pageparse(html)
+        savedb(movie_id, result)
+
+        time.sleep(2)
+        print("等待2s，继续爬取")
+        offset += 20
+
+
 
