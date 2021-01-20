@@ -1,5 +1,10 @@
 import redis
 
+"""
+使用redis 的hash数据结构能满足需求，创建video_view_num做为键名，
+video_id作为key名，访问量作为value值
+"""
+
 pool = redis.ConnectionPool(host='127.0.0.1',port=6379, db=0, password='foobared')
 cli = redis.StrictRedis(connection_pool=pool)
 
